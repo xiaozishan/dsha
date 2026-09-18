@@ -1,4 +1,4 @@
-<resources>
+﻿<resources>
     <string name="device_open_access">Manage file access</string>
     <string name="device_location">Location access</string>
     <string name="device_sensors">Sensor access</string>
@@ -13,4 +13,11 @@
     <string name="device_files_title">All files access</string>
     <string name="device_permissions">Permission access</string>
     <string name="device_channels">Device command channels</string>
+    <string name="about_contributors">Original @qiannianhuanxiang · Maintainer @ym2025szz · Mod release by @XiaoZishannb</string>
+    <string name="market_title">Popular plugins (1024 Store)</string>
+    <string name="market_loading">Loading catalog…</string>
+    <string name="market_offline">Bundled catalog (offline mode)</string>
+    <string name="market_error">Failed to load catalog</string>
+    <string name="market_install">Install</string>
+    <string name="market_more">Showing top 50 of %1$d plugins; use the link box above for more</string>
 </resources>

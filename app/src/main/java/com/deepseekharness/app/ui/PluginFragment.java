@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +58,11 @@ public class PluginFragment extends Fragment {
     private final android.os.Handler refreshHandler = new android.os.Handler(android.os.Looper.getMainLooper());
     private final Runnable refreshInvalidated = this::refreshInstalledIfNeeded;
     private String environmentNotice;
+    /** 插件市场目录：远程 → 本地缓存 → 内置兜底，三级降级；只加载一次。 */
+    private boolean marketLoaded;
+    private final java.util.List<com.deepseekharness.app.util.MarketCatalog.Entry> marketEntries = new java.util.ArrayList<>();
+    private MarketAdapter marketAdapter;
+    private static final int MARKET_SHOW_MAX = 50;
 
     static void invalidateInstalledState() { installedRevision++; }
 
@@ -166,6 +172,11 @@ public class PluginFragment extends Fragment {
         list.setItemAnimator(null);
         list.setAdapter(adapter);
         view.findViewById(R.id.btnMarket).setOnClickListener(v -> selectTab(true));
+        marketAdapter = new MarketAdapter();
+        androidx.recyclerview.widget.RecyclerView marketList = view.findViewById(R.id.marketList);
+        marketList.setLayoutManager(new LinearLayoutManager(requireContext()));
+        marketList.setAdapter(marketAdapter);
+        if (market) loadMarket();
         view.findViewById(R.id.btnPluginWebsite).setOnClickListener(v -> openPluginWebsite());
         view.findViewById(R.id.btnInstalled).setOnClickListener(v -> selectTab(false));
         view.findViewById(R.id.btnRefresh).setOnClickListener(v -> repository.refresh());
@@ -271,6 +282,7 @@ public class PluginFragment extends Fragment {
 
     private void selectTab(boolean showMarket) {
         market = showMarket;
+        if (showMarket) loadMarket();
         linkInput.clearFocus();
         search.clearFocus();
         android.view.inputmethod.InputMethodManager keyboard = (android.view.inputmethod.InputMethodManager)
@@ -288,6 +300,186 @@ public class PluginFragment extends Fragment {
                     .addCategory(android.content.Intent.CATEGORY_BROWSABLE));
         } catch (RuntimeException error) {
             toast(com.deepseekharness.app.util.UiText.text("无法打开浏览器，请在浏览器中访问 https://dsha.cc/"));
+        }
+    }
+
+    // ---------- 插件市场目录（1024 商店：远程 → 本地缓存 → 内置兜底） ----------
+
+    private void loadMarket() {
+        if (marketLoaded) return;
+        marketLoaded = true;
+        setMarketStatus(getString(com.deepseekharness.app.R.string.market_loading));
+        new Thread(new Runnable() {
+            @Override public void run() {
+                java.util.List<com.deepseekharness.app.util.MarketCatalog.Entry> entries = null;
+                String remote = fetchMarket("https://deepseek1024.com/api/v1/plugins?page=1&limit=100");
+                if (remote != null) entries = com.deepseekharness.app.util.MarketCatalog.parse(remote);
+                if (entries != null && !entries.isEmpty()) {
+                    writeMarketCache(remote);
+                } else {
+                    String cache = readMarketFile(new java.io.File(requireContext().getFilesDir(), "market-cache.json"));
+                    if (cache != null) entries = com.deepseekharness.app.util.MarketCatalog.parse(cache);
+                }
+                final boolean offline;
+                if (entries == null || entries.isEmpty()) {
+                    offline = true;
+                    entries = com.deepseekharness.app.util.MarketCatalog.parse(readMarketAsset());
+                } else {
+                    offline = false;
+                }
+                final java.util.List<com.deepseekharness.app.util.MarketCatalog.Entry> result =
+                        entries == null
+                                ? java.util.Collections.<com.deepseekharness.app.util.MarketCatalog.Entry>emptyList()
+                                : entries;
+                android.app.Activity activity = getActivity();
+                if (activity == null) return;
+                activity.runOnUiThread(new Runnable() {
+                    @Override public void run() { showMarket(result, offline); }
+                });
+            }
+        }, "market-load").start();
+    }
+
+    private void showMarket(java.util.List<com.deepseekharness.app.util.MarketCatalog.Entry> entries, boolean offline) {
+        marketEntries.clear();
+        int count = Math.min(entries.size(), MARKET_SHOW_MAX);
+        marketEntries.addAll(entries.subList(0, count));
+        if (marketAdapter != null) marketAdapter.notifyDataSetChanged();
+        if (entries.isEmpty()) {
+            setMarketStatus(getString(com.deepseekharness.app.R.string.market_error));
+        } else if (offline) {
+            setMarketStatus(getString(com.deepseekharness.app.R.string.market_offline));
+        } else if (entries.size() > MARKET_SHOW_MAX) {
+            setMarketStatus(getString(com.deepseekharness.app.R.string.market_more, entries.size()));
+        } else {
+            setMarketStatus(null);
+        }
+    }
+
+    private void setMarketStatus(String text) {
+        if (root == null) return;
+        TextView status = root.findViewById(com.deepseekharness.app.R.id.marketStatus);
+        if (status == null) return;
+        if (text == null || text.isEmpty()) {
+            status.setVisibility(View.GONE);
+            return;
+        }
+        status.setVisibility(View.VISIBLE);
+        status.setText(text);
+    }
+
+    private String fetchMarket(String url) {
+        java.io.InputStream in = null;
+        try {
+            java.net.HttpURLConnection conn = (java.net.HttpURLConnection) new java.net.URL(url).openConnection();
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(15000);
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setRequestProperty("User-Agent", "dsha-market/1.0");
+            if (conn.getResponseCode() != 200) return null;
+            java.io.ByteArrayOutputStream buf = new java.io.ByteArrayOutputStream();
+            in = conn.getInputStream();
+            byte[] b = new byte[16384];
+            int n;
+            long total = 0;
+            while ((n = in.read(b)) > 0) {
+                buf.write(b, 0, n);
+                total += n;
+                if (total > 32L * 1024 * 1024) return null;
+            }
+            return buf.toString("UTF-8");
+        } catch (Exception ignored) {
+            return null;
+        } finally {
+            if (in != null) try { in.close(); } catch (Exception ignored) {}
+        }
+    }
+
+    private String readMarketAsset() {
+        java.io.InputStream in = null;
+        try {
+            in = requireContext().getAssets().open("tools/market-catalog.json");
+            java.io.ByteArrayOutputStream buf = new java.io.ByteArrayOutputStream();
+            byte[] b = new byte[16384];
+            int n;
+            while ((n = in.read(b)) > 0) buf.write(b, 0, n);
+            return buf.toString("UTF-8");
+        } catch (Exception ignored) {
+            return null;
+        } finally {
+            if (in != null) try { in.close(); } catch (Exception ignored) {}
+        }
+    }
+
+    private String readMarketFile(java.io.File file) {
+        try {
+            java.io.FileInputStream in = new java.io.FileInputStream(file);
+            try {
+                java.io.ByteArrayOutputStream buf = new java.io.ByteArrayOutputStream();
+                byte[] b = new byte[16384];
+                int n;
+                while ((n = in.read(b)) > 0) buf.write(b, 0, n);
+                return buf.toString("UTF-8");
+            } finally {
+                in.close();
+            }
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    private void writeMarketCache(String content) {
+        java.io.FileOutputStream out = null;
+        try {
+            out = new java.io.FileOutputStream(new java.io.File(requireContext().getFilesDir(), "market-cache.json"));
+            out.write(content.getBytes("UTF-8"));
+        } catch (Exception ignored) {
+        } finally {
+            if (out != null) try { out.close(); } catch (Exception ignored) {}
+        }
+    }
+
+    private final class MarketAdapter extends RecyclerView.Adapter<MarketAdapter.Holder> {
+        private final boolean zhLocale = java.util.Locale.getDefault().getLanguage().startsWith("zh");
+
+        final class Holder extends RecyclerView.ViewHolder {
+            final TextView name, desc;
+            final Button install;
+            Holder(View item) {
+                super(item);
+                name = item.findViewById(com.deepseekharness.app.R.id.marketItemName);
+                desc = item.findViewById(com.deepseekharness.app.R.id.marketItemDesc);
+                install = item.findViewById(com.deepseekharness.app.R.id.marketItemInstall);
+            }
+        }
+
+        @NonNull
+        @Override
+        public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View item = LayoutInflater.from(parent.getContext())
+                    .inflate(com.deepseekharness.app.R.layout.item_market_plugin, parent, false);
+            return new Holder(item);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull Holder h, int position) {
+            final com.deepseekharness.app.util.MarketCatalog.Entry e = marketEntries.get(position);
+            h.name.setText(e.name.isEmpty() ? e.spec : e.name);
+            String text = zhLocale
+                    ? (e.zh.isEmpty() ? e.en : e.zh)
+                    : (e.en.isEmpty() ? e.zh : e.en);
+            h.desc.setText(text.isEmpty() ? e.spec : text);
+            h.install.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    if (linkInput != null) linkInput.setText(e.spec);
+                    installLink();
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return marketEntries.size();
         }
     }
 

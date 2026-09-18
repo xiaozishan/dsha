@@ -1,4 +1,4 @@
-<resources>
+﻿<resources>
     <string name="device_open_access">管理文件访问权限</string>
     <string name="device_location">定位访问</string>
     <string name="device_sensors">传感器访问</string>
@@ -13,4 +13,11 @@
     <string name="device_files_title">所有文件访问权限</string>
     <string name="device_permissions">权限访问</string>
     <string name="device_channels">设备命令通道</string>
+    <string name="about_contributors">原作者 @qiannianhuanxiang · 维护者 @ym2025szz · 魔改发行 @XiaoZishannb</string>
+    <string name="market_title">热门插件（1024 商店）</string>
+    <string name="market_loading">正在加载市场目录…</string>
+    <string name="market_offline">已加载内置目录（离线模式）</string>
+    <string name="market_error">市场目录加载失败</string>
+    <string name="market_install">安装</string>
+    <string name="market_more">仅显示前 50 个热门插件（共 %1$d 个），更多请用上方链接安装</string>
 </resources>

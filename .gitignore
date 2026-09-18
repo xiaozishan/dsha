@@ -39,3 +39,8 @@ scr_backup.png
 # 本机工具状态与服务器取证，不进入公开仓库
 .zcode/
 website-evidence/
+
+# 魔改版签名密钥（绝不入库）
+tools/fork-release.keystore
+app/src/main/assets/offline-rootfs.bin
+

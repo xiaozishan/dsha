@@ -136,21 +136,21 @@
       "Package": "libgssapi-krb5-2",
       "Installed-Size": "422",
       "Architecture": "arm64",
-      "Version": "1.20.1-6ubuntu2.8",
-      "Depends": "libkrb5-3 (= 1.20.1-6ubuntu2.8), libc6 (>= 2.38), libcom-err2 (>= 1.43.9), libk5crypto3 (>= 1.20), libkrb5support0 (= 1.20.1-6ubuntu2.8)",
-      "Filename": "pool/main/k/krb5/libgssapi-krb5-2_1.20.1-6ubuntu2.8_arm64.deb",
-      "Size": "141678",
-      "SHA256": "3f2aea0bbe7aa2dfc9a525c5bde7bcb6d035cd99975b80a24a09eadcfe5d7503"
+      "Version": "1.20.1-6ubuntu2.7",
+      "Depends": "libkrb5-3 (= 1.20.1-6ubuntu2.7), libc6 (>= 2.38), libcom-err2 (>= 1.43.9), libk5crypto3 (>= 1.20), libkrb5support0 (= 1.20.1-6ubuntu2.7)",
+      "Filename": "pool/main/k/krb5/libgssapi-krb5-2_1.20.1-6ubuntu2.7_arm64.deb",
+      "Size": "141682",
+      "SHA256": "5cc2c7125942d8452c9bd4bf6ba9697bbf83538a097612272b8cdc32a29b5a59"
     },
     {
       "Package": "libk5crypto3",
       "Installed-Size": "278",
       "Architecture": "arm64",
-      "Version": "1.20.1-6ubuntu2.8",
-      "Depends": "libc6 (>= 2.38), libkrb5support0 (= 1.20.1-6ubuntu2.8)",
-      "Filename": "pool/main/k/krb5/libk5crypto3_1.20.1-6ubuntu2.8_arm64.deb",
-      "Size": "85794",
-      "SHA256": "989dd6b8e5707c73a8982f8e97080fc7a0f359a912d7a1d7e4a8b9185442a696"
+      "Version": "1.20.1-6ubuntu2.7",
+      "Depends": "libc6 (>= 2.38), libkrb5support0 (= 1.20.1-6ubuntu2.7)",
+      "Filename": "pool/main/k/krb5/libk5crypto3_1.20.1-6ubuntu2.7_arm64.deb",
+      "Size": "85822",
+      "SHA256": "3cd713a866900412d078776643168454dc74a6027f01feaac140cbeedc815143"
     },
     {
       "Package": "libkeyutils1",
@@ -166,21 +166,21 @@
       "Package": "libkrb5-3",
       "Installed-Size": "1098",
       "Architecture": "arm64",
-      "Version": "1.20.1-6ubuntu2.8",
-      "Depends": "libkrb5support0 (= 1.20.1-6ubuntu2.8), libc6 (>= 2.38), libcom-err2 (>= 1.43.9), libk5crypto3 (>= 1.20), libkeyutils1 (>= 1.5.9), libssl3t64 (>= 3.0.0)",
-      "Filename": "pool/main/k/krb5/libkrb5-3_1.20.1-6ubuntu2.8_arm64.deb",
-      "Size": "349476",
-      "SHA256": "ef9bcb4f46d80022072741af30df1b6b08a80a8c3c3bbb06e0e710f99e4dab44"
+      "Version": "1.20.1-6ubuntu2.7",
+      "Depends": "libkrb5support0 (= 1.20.1-6ubuntu2.7), libc6 (>= 2.38), libcom-err2 (>= 1.43.9), libk5crypto3 (>= 1.20), libkeyutils1 (>= 1.5.9), libssl3t64 (>= 3.0.0)",
+      "Filename": "pool/main/k/krb5/libkrb5-3_1.20.1-6ubuntu2.7_arm64.deb",
+      "Size": "349216",
+      "SHA256": "8612f19010004b5c0a67727a91a0f5ac4d597ae96ff259ba39e886b77e26091c"
     },
     {
       "Package": "libkrb5support0",
       "Installed-Size": "153",
       "Architecture": "arm64",
-      "Version": "1.20.1-6ubuntu2.8",
+      "Version": "1.20.1-6ubuntu2.7",
       "Depends": "libc6 (>= 2.38)",
-      "Filename": "pool/main/k/krb5/libkrb5support0_1.20.1-6ubuntu2.8_arm64.deb",
-      "Size": "35090",
-      "SHA256": "ee2327c5501eec9d31f696cdd7a332509f90f130cde6180a5b99337deb7c39fe"
+      "Filename": "pool/main/k/krb5/libkrb5support0_1.20.1-6ubuntu2.7_arm64.deb",
+      "Size": "34978",
+      "SHA256": "e82de87da10937d7966d978893b5754476a6b99a840d4e471d2d7bfdaac91189"
     },
     {
       "Package": "libldap2",
@@ -204,13 +204,13 @@
     },
     {
       "Package": "libperl5.38t64",
-      "Installed-Size": "31047",
+      "Installed-Size": "31048",
       "Architecture": "arm64",
-      "Version": "5.38.2-3.2ubuntu0.4",
-      "Depends": "libbz2-1.0, libc6 (>= 2.38), libcrypt1 (>= 1:4.1.0), libdb5.3t64, libgdbm-compat4t64 (>= 1.18-3), libgdbm6t64 (>= 1.21), zlib1g (>= 1:1.2.3.3), perl-modules-5.38 (>= 5.38.2-3.2ubuntu0.4)",
-      "Filename": "pool/main/p/perl/libperl5.38t64_5.38.2-3.2ubuntu0.4_arm64.deb",
-      "Size": "4784520",
-      "SHA256": "d539297e7d903e6358430bbf25e8574d077a7f7de7a673d6360b5a6f7f87d67e"
+      "Version": "5.38.2-3.2ubuntu0.6",
+      "Depends": "libbz2-1.0, libc6 (>= 2.38), libcrypt1 (>= 1:4.1.0), libdb5.3t64, libgdbm-compat4t64 (>= 1.18-3), libgdbm6t64 (>= 1.21), zlib1g (>= 1:1.2.3.3), perl-modules-5.38 (>= 5.38.2-3.2ubuntu0.6)",
+      "Filename": "pool/main/p/perl/libperl5.38t64_5.38.2-3.2ubuntu0.6_arm64.deb",
+      "Size": "4784712",
+      "SHA256": "f9ef8a6909d0048cc4e4ce89c3c3ed010ba13e7932024d5744e38294e42b0925"
     },
     {
       "Package": "libpsl5t64",
@@ -274,35 +274,35 @@
     },
     {
       "Package": "perl",
-      "Installed-Size": "673",
+      "Installed-Size": "674",
       "Architecture": "arm64",
-      "Version": "5.38.2-3.2ubuntu0.4",
-      "Depends": "perl-base (= 5.38.2-3.2ubuntu0.4), perl-modules-5.38 (>= 5.38.2-3.2ubuntu0.4), libperl5.38t64 (= 5.38.2-3.2ubuntu0.4)",
+      "Version": "5.38.2-3.2ubuntu0.6",
+      "Depends": "perl-base (= 5.38.2-3.2ubuntu0.6), perl-modules-5.38 (>= 5.38.2-3.2ubuntu0.6), libperl5.38t64 (= 5.38.2-3.2ubuntu0.6)",
       "Pre-Depends": "dpkg (>= 1.17.17)",
-      "Filename": "pool/main/p/perl/perl_5.38.2-3.2ubuntu0.4_arm64.deb",
-      "Size": "231440",
-      "SHA256": "585e0229427b1897c6718fd30e7be725f7beb762432460e0b1788646955b3094"
+      "Filename": "pool/main/p/perl/perl_5.38.2-3.2ubuntu0.6_arm64.deb",
+      "Size": "231438",
+      "SHA256": "c8997d0e440f8f220981e25af1f63d1ab6a86afba770218a240cd5f385585aee"
     },
     {
       "Package": "perl-base",
-      "Installed-Size": "8127",
+      "Installed-Size": "8128",
       "Architecture": "arm64",
-      "Version": "5.38.2-3.2ubuntu0.4",
+      "Version": "5.38.2-3.2ubuntu0.6",
       "Pre-Depends": "libc6 (>= 2.38), libcrypt1 (>= 1:4.1.0), dpkg (>= 1.17.17)",
-      "Filename": "pool/main/p/perl/perl-base_5.38.2-3.2ubuntu0.4_arm64.deb",
-      "Size": "1780926",
-      "SHA256": "ef46aa2535744a298e6a3406d7440a66a2b369d56a09acf2110bce95e7aac73a"
+      "Filename": "pool/main/p/perl/perl-base_5.38.2-3.2ubuntu0.6_arm64.deb",
+      "Size": "1780386",
+      "SHA256": "52ff69555911c8ef4350a80b12bbdc823b6c096cb15eb39c540cd84e6c726cc0"
     },
     {
       "Package": "perl-modules-5.38",
-      "Installed-Size": "19164",
+      "Installed-Size": "19165",
       "Architecture": "all",
-      "Version": "5.38.2-3.2ubuntu0.4",
+      "Version": "5.38.2-3.2ubuntu0.6",
       "Depends": "perl-base (>= 5.38.2-1)",
       "Pre-Depends": "dpkg (>= 1.17.17)",
-      "Filename": "pool/main/p/perl/perl-modules-5.38_5.38.2-3.2ubuntu0.4_all.deb",
-      "Size": "3110104",
-      "SHA256": "14e3fb89fdc5e154f0f442f8ed5d2b5e07d98fe4b883b97793df459ff265e866"
+      "Filename": "pool/main/p/perl/perl-modules-5.38_5.38.2-3.2ubuntu0.6_all.deb",
+      "Size": "3110182",
+      "SHA256": "9c4c90145209d4f85be9255417008e8decb9cd5d189f446fd39ad096e31199cf"
     }
   ]
 }

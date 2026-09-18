@@ -33,7 +33,7 @@ public class MaintenanceTransactionTest {
         assertFalse(linux.exists()); assertTrue(linux.mkdir());
         Files.write(new File(linux, "new-partial").toPath(), "partial".getBytes());
         task.rollback();
-        assertEquals("old-session", Files.readString(new File(linux, "private-session").toPath()));
+        assertEquals("old-session", TestIo.readText(new File(linux, "private-session").toPath()));
         assertTrue(new File(task.directory(), "failed-linux/new-partial").exists());
         assertTrue(task.archive().exists()); assertNull(MaintenanceTransaction.pending(fixture.getRoot()));
     }
@@ -45,7 +45,7 @@ public class MaintenanceTransactionTest {
     }
     @Test public void deathBeforeRenameKeepsEnvironment() throws Exception {
         File linux = oldEnvironment(); MaintenanceTransaction task = verified();
-        Files.writeString(new File(task.directory(), "intent.properties").toPath(), "hadEnvironment=true\n");
+        TestIo.writeText(new File(task.directory(), "intent.properties").toPath(), "hadEnvironment=true\n");
         MaintenanceTransaction.pending(fixture.getRoot()).rollback();
         assertTrue(new File(linux, "private-session").exists());
     }
@@ -76,7 +76,7 @@ public class MaintenanceTransactionTest {
         task.dataPreserved("a".repeat(64));
         assertFalse(task.cleanup(cleaner)); assertEquals(0, calls[0]);
         task.commit();
-        Files.writeString(task.personalArchive().toPath(), "personal-snapshot");
+        TestIo.writeText(task.personalArchive().toPath(), "personal-snapshot");
         assertTrue(task.cleanup(cleaner)); assertEquals(1, calls[0]);
         assertFalse(task.personalArchive().exists()); assertTrue(task.archive().isFile());
         assertTrue(task.cleanup(cleaner)); assertEquals(1, calls[0]);
@@ -110,7 +110,7 @@ public class MaintenanceTransactionTest {
     }
     @Test public void unknownIntentFailsClosed() throws Exception {
         File linux = oldEnvironment(); MaintenanceTransaction task = verified();
-        Files.writeString(new File(task.directory(), "intent.properties").toPath(), "truncated");
+        TestIo.writeText(new File(task.directory(), "intent.properties").toPath(), "truncated");
         assertThrows(java.io.IOException.class, () -> MaintenanceTransaction.pending(fixture.getRoot()).rollback());
         assertTrue(new File(linux, "private-session").exists());
     }

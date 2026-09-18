@@ -1,6 +1,7 @@
 package com.deepseekharness.app.runtime;
 
 import com.deepseekharness.app.util.AdbWheelCache;
+import com.deepseekharness.app.util.TestIo;
 import com.deepseekharness.app.util.FileIntegrity;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class AdbWheelBundleTest {
         if (!assets.isDirectory()) assets = new File("src/main/assets");
         File archive = new File(assets, "adb-wheels.tar.gz");
         assertTrue("测试需在源码根目录或 app 目录运行", archive.isFile());
-        String engine = Files.readString(new File(assets, "backup-engine.py").toPath());
+        String engine = TestIo.readText(new File(assets, "backup-engine.py").toPath());
         Matcher archiveHash = Pattern.compile("ADB_ARCHIVE_SHA256 = '([a-f0-9]{64})'").matcher(engine);
         assertTrue(archiveHash.find()); assertEquals(archiveHash.group(1), hash(archive));
         Map<String, String> expected = new HashMap<>();
@@ -54,12 +55,12 @@ public class AdbWheelBundleTest {
         String originalModifiedHash = hash(modified);
         assertNotEquals(expected.get(modifiedName), originalModifiedHash);
         File cachedArchive = new File(temp.getRoot(), "user-archive.tar.gz");
-        Files.writeString(cachedArchive.toPath(), "restored modified archive bytes");
+        TestIo.writeText(cachedArchive.toPath(), "restored modified archive bytes");
         AdbWheelCache.Merge report = AdbWheelCache.fillMissing(bundled, restored, archive, cachedArchive);
         assertEquals(expected.size() - 1, report.added);
         assertEquals(1, report.modified);
         assertEquals(originalModifiedHash, hash(modified));
-        assertEquals("restored modified archive bytes", Files.readString(cachedArchive.toPath()));
+        assertEquals("restored modified archive bytes", TestIo.readText(cachedArchive.toPath()));
         for (Map.Entry<String, String> item : expected.entrySet())
             if (!item.getKey().equals(modifiedName)) assertEquals(item.getValue(), hash(new File(restored, item.getKey())));
         AdbWheelCache.validate(restored);

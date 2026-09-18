@@ -31,7 +31,7 @@ public class AdbWheelCacheTest {
         return out;
     }
     private byte[] bytes(File file) throws IOException { return Files.readAllBytes(file.toPath()); }
-    private String text(File file) throws IOException { return Files.readString(file.toPath()); }
+    private String text(File file) throws IOException { return TestIo.readText(file.toPath()); }
 
     @Test public void partialCacheKeepsModifiedSameNameExtraAndArchiveAndInstallsTheirContent() throws Exception {
         File bundled = temp.newFolder("apk"), cache = temp.newFolder("cache"), stage = temp.newFolder("stage"), site = temp.newFolder("site");

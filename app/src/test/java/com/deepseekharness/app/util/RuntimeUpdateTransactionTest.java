@@ -1,13 +1,21 @@
 package com.deepseekharness.app.util;
 
 import org.junit.Rule;
+import com.deepseekharness.app.util.TestIo;
 import org.junit.Test;
+import com.deepseekharness.app.util.TestIo;
 import org.junit.rules.TemporaryFolder;
+import com.deepseekharness.app.util.TestIo;
 import java.io.File;
+import com.deepseekharness.app.util.TestIo;
 import java.io.IOException;
+import com.deepseekharness.app.util.TestIo;
 import java.nio.file.Files;
+import com.deepseekharness.app.util.TestIo;
 import java.util.List;
+import com.deepseekharness.app.util.TestIo;
 import static org.junit.Assert.*;
+import com.deepseekharness.app.util.TestIo;
 
 /** 真实同盘改名与中断回滚；夹具只触及测试私有目录。 */
 public class RuntimeUpdateTransactionTest {
@@ -16,9 +24,9 @@ public class RuntimeUpdateTransactionTest {
     private static final String IDENTITY = "linux/.offline-identity";
     private void put(File root, String path, String value) throws Exception {
         File file = new File(root, path); assertTrue(file.getParentFile().isDirectory() || file.getParentFile().mkdirs());
-        Files.writeString(file.toPath(), value);
+        TestIo.writeText(file.toPath(), value);
     }
-    private String read(File root, String path) throws Exception { return Files.readString(new File(root, path).toPath()); }
+    private String read(File root, String path) throws Exception { return TestIo.readText(new File(root, path).toPath()); }
     private RuntimeUpdateTransaction prepared() throws Exception {
         put(fixture.getRoot(), RUNTIME + "/package.json", "old");
         put(fixture.getRoot(), IDENTITY, "114:10:0.1.5-alpha.1");

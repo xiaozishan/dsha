@@ -32,6 +32,9 @@
                     <TextView android:id="@+id/btnPluginInstall" style="@style/PluginAction" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:layout_marginStart="@dimen/gap_tight" android:text="@string/ui_m0184" android:background="@drawable/bg_polished_primary" android:textColor="@color/polished_primary_text" android:minHeight="52dp" />
                 </LinearLayout>
             </LinearLayout>
+            <TextView android:id="@+id/marketTitle" style="@style/DshaText.Label" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/market_title" android:layout_marginTop="12dp" />
+            <androidx.recyclerview.widget.RecyclerView android:id="@+id/marketList" android:layout_width="match_parent" android:layout_height="wrap_content" android:nestedScrollingEnabled="false" />
+            <TextView android:id="@+id/marketStatus" style="@style/DshaText.Caption" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/market_loading" />
         </LinearLayout>
         <ProgressBar android:id="@+id/pluginBusy" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="3dp" android:layout_marginTop="@dimen/gap_control" android:indeterminate="true" android:indeterminateTint="@color/primary" android:visibility="gone" />
         <TextView android:id="@+id/statusText" style="@style/DshaText.Caption" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:layout_marginBottom="4dp" android:maxLines="2" android:ellipsize="end" android:minHeight="44dp" android:paddingTop="@dimen/gap_hair" android:paddingBottom="@dimen/gap_hair" android:clickable="true" android:focusable="true" android:contentDescription="@string/ui_m0134" android:gravity="center_vertical" />

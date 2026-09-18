@@ -7,16 +7,16 @@ plugins {
 android {
     namespace 'com.deepseekharness.app'
     compileSdk {
-        version = release(37)
+        version = release(36)
     }
     ndkVersion '26.3.11579264'
 
     defaultConfig {
         applicationId "com.dsh.client"
         minSdk 30
-        targetSdk 37
-        versionCode 129
-        versionName "0.1.5-rc2"
+        targetSdk 36
+        versionCode 130
+        versionName "0.3.0"
         testInstrumentationRunner project.findProperty('dsha.testRunner') ?: "com.deepseekharness.app.Rc13Instrumentation"
         ndk {
             abiFilters 'arm64-v8a'
@@ -33,7 +33,7 @@ android {
         low {
             dimension 'androidSupport'
             minSdk 23
-            versionName '0.1.5-rc2low'
+            versionName '0.3.0low'
             buildConfigField 'boolean', 'LOW_ANDROID', 'true'
         }
     }
@@ -89,6 +89,12 @@ android {
         // 'bin' 是离线 rootfs：aapt 会把 .tar.gz 静默解成 .tar，所以打包前改名 .bin，
         // 保持 STORED（不 deflate），避免对已经压缩的离线运行时再压缩一次。
         noCompress += ['gz', 'xz', 'bin', 'ja', 'tar', 'whl']
+    }
+
+    // 魔改版：发布构建跳过 lint vital（dl.google.com 直连抖动严重，lint 依赖 30MB+ jar 下载不稳）
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
     }
 
     compileOptions {
@@ -153,4 +159,6 @@ dependencies {
     // （com.termux.termux-app），不是 Wiki 上会 401 的 com.termux:terminal-view。
     implementation 'com.termux.termux-app:terminal-view:0.118.0'
     testImplementation 'junit:junit:4.13.2'
+    // 本地单测跑在 JVM 上，org.json 需要显式依赖（android.jar 里的桩会抛 not mocked）。
+    testImplementation 'org.json:json:20240303'
 }

@@ -42,6 +42,7 @@ def main():
     if len({r['Package'] for r in rows}) != len(rows):
         raise ValueError('工具包重复')
     def fetch(row):
+        print('fetch', row['Filename'], flush=True)
         relative = row['Filename']
         if not relative.startswith('pool/main/') or '..' in relative.split('/') or not re.fullmatch(r'[A-Za-z0-9_./+~%-]+', relative):
             raise ValueError('软件包路径无效')
