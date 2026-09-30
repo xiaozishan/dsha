@@ -44,3 +44,7 @@ website-evidence/
 tools/fork-release.keystore
 app/src/main/assets/offline-rootfs.bin
 
+
+# 派蒙重建版用的新签名密钥（2026-09-30）——密钥不入库
+tools/fork-release-v2.keystore
+
