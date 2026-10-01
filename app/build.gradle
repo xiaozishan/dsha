@@ -1,4 +1,4 @@
-plugins {
+﻿plugins {
     id 'com.android.application'
 }
 
@@ -61,7 +61,7 @@ android {
             }
             enableV1Signing true
             enableV2Signing true
-            enableV3Signing true
+            enableV3Signing false // 2026-10-01: ColorOS 解析不了 v3 签名块，会报「没有签名文件」；v2 就够
         }
     }
 
@@ -268,3 +268,4 @@ dependencies {
     implementation 'org.bouncycastle:bcprov-jdk15to18:1.85.2'
     testImplementation 'junit:junit:4.13.2'
 }
+
