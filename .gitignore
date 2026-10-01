@@ -39,3 +39,7 @@ scr_backup.png
 # 本机工具状态与服务器取证，不进入公开仓库
 .zcode/
 website-evidence/
+
+# 签名密钥绝不入库（2026-10-01 补）
+tools/*.keystore
+
