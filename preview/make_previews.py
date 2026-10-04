@@ -7,7 +7,7 @@ from PIL import Image
 
 BASE = r'C:\Users\Administrator\.openclaw\workspace\projects\dsha-v1.2.0-rc1.4\preview'
 CHROME = r'C:\Program Files\Google\Chrome\Application\chrome.exe'
-SCALE = 1.08
+SCALE = 1.0
 
 fg_xml = open(os.path.join(BASE, '..', r'app\src\main\res\drawable\dsha_launcher_foreground.xml'), encoding='utf-8').read()
 PATH = re.search(r'android:pathData="([^"]+)"', fg_xml).group(1)
