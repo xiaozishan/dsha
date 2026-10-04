@@ -28,4 +28,6 @@
     <color name="disabled">#E9ECF2</color>
     <!-- 状态色的浅底（用于状态条/标签背景，不刺眼） -->
     <color name="err_bg">#14C45A5A</color>
+    <!-- 启动图标前景色（矢量，浅色主题 = 深字） -->
+    <color name="ic_icon_fg">#1C2635</color>
 </resources>
