@@ -2,7 +2,7 @@
   "version": 1,
   "runtimeId": "7a6a1f078f235682fdac76d38fd36cac38e4d5951d9b95018e0f141e242cedd7",
   "baseVersion": "10",
-  "dshVersion": "0.1.7-rc.2",
+  "dshVersion": "0.2.0-rc.2",
   "launcherContract": "DSHA_ARM64_V2",
   "launcherInputs": {
     "DshaApp.java": "7e0e6aaebd98af89d34bafd93023573c95aaf5f14106eca19567fe88e3e3e990",
@@ -10,7 +10,7 @@
     "app/src/low/jniLibs/arm64-v8a/libproot_legacy.so": "c4cec36906b973c5923023e3492b2b221a739a4a5fa1f6dc5bc834ac9a05e9db",
     "app/src/low/jniLibs/arm64-v8a/libprootloader_legacy.so": "e2d450b84960cf5e897a36549e86801b8010f440b6355983acce93c339bba610",
     "app/src/main/jniLibs/arm64-v8a/libandroidshmem.so": "84475798e07c8174dbbfaec70a827fdb02f19ffa69a589380c13e7507fd0e731",
-    "app/src/main/jniLibs/arm64-v8a/libdsha-session.so": "0ab7a3c3a944d7237bfd5107a9fd670a2b5708c4dd50490e049b697e1d23034d",
+    "app/src/main/jniLibs/arm64-v8a/libdsha-session.so": "12ace2a08056105a663f0ebc492e568d8322a6b252550a16bc05668ed9a58ed5",
     "app/src/main/jniLibs/arm64-v8a/libproot.so": "cbde86eb01b58413f9e4673e182caca5440e8fc4af8482a0e23d0faa0846f721",
     "app/src/main/jniLibs/arm64-v8a/libprootloader.so": "a2cbccfc776e23225b75e6700dd1990fcd505d2e973f5bfa19c76642d4e41c7d",
     "app/src/main/jniLibs/arm64-v8a/libprootloader32.so": "4c649eb2dce258c9111231940fdbf0474bcf1cd6dd447ad9bdf2898b35a85554",
@@ -61,12 +61,13 @@
     "util/WebPidIdentity.java": "297561f0b7b2e308e4cdb2c81da19264be537ca85da4418cdad69f5195bf333d",
     "util/WebProcSel.java": "4040081d6d05de1150a3f55a28f64a8ba3bd0e46c7169675a724eb3693150720"
   },
-  "bridgeProtocol": 2,
+  "bridgeProtocol": 3,
   "dataRead": [
     "dsh-0.1.7-rc.1",
-    "dsh-0.1.7-rc.2"
+    "dsh-0.1.7-rc.2",
+    "dsh-0.2.0-rc.2"
   ],
-  "dataWrite": "dsh-0.1.7-rc.2",
+  "dataWrite": "dsh-0.2.0-rc.2",
   "inputs": {
     "adb-shell.py": "de41b0a3cf103cc4f6d99084f55ade2b59d7d5780dea07b03d63819acaccdbc0",
     "agent-preset-patch.json": "98025f90d8039cd4e329906a86c24ca9e9c805635c19a28d1eb359dad6ac2c08",
@@ -77,6 +78,7 @@
     "app-integration/package.json": "e6fc7e9abc9dc8ac7cf83882b7ecabe58666cbae48ff9b826e7ef243e337529f",
     "app-integration/runtime-plugins.js": "479257e145ac1db8e40ab5553dd7e507a7e179901b547a1b2c7f3e4d218f2c38",
     "backup-plugin-graph.py": "2014545c9491327ce0095bb3d2735a76ca8ccae3ef1256d9f558718784e2bb63",
+    "bridge-token-compat.cjs": "f0d42affc9994aa1900d530e364d3fdb74375236d2263e864a4ea1fcf0f1f335",
     "builtin-plugins/dsh-auto-review/cordis.patch.yml": "21d456d0053b3d52ca8ad4ceef60e4cd5618e8c850ab8fe9e6377dfcdcb3bc2a",
     "builtin-plugins/dsh-auto-review/lib/index.js": "038003c09afff3d46b412721200e26bd5e9ed863fceaba25705597898ad17960",
     "builtin-plugins/dsh-auto-review/package.json": "ad2ace329b677cd4a0386b6786a86c031d2671e2a3f4fd212b899ccbbfe129ce",

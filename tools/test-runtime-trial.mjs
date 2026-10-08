@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import {testRuntime} from './test-runtime-fixture.mjs';
 // 桌面协议回归：真实 JSON 存储后端 + 合成浏览器事件。不是 Android / Gecko 健康证明。
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -6,18 +7,22 @@ import path from 'node:path';
 import {pathToFileURL,fileURLToPath} from 'node:url';
 import vm from 'node:vm';
 import {randomUUID} from 'node:crypto';
+import {spawnSync} from 'node:child_process';
 
 const repository=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const modules=path.resolve(process.argv[2]||path.join(repository,'app/build/rc2-20260911/locked-runtime/node_modules'));
+const selected = path.join(testRuntime('raw'), 'node_modules');
+const modules = path.resolve(process.argv[2] || selected);
+assert.equal(modules, selected, 'Runtime trial must use the current proven raw modules');
 const parent=path.resolve(process.argv[3]||path.join(repository,'app/build/backup-upgrade-baseline'));
 if(!parent.startsWith(path.join(repository,'app/build')+path.sep))throw Error('Unsafe test output directory');
 await fs.mkdir(parent,{recursive:true});
 const owned=await fs.mkdtemp(path.join(parent,'trial-protocol-'));
 const results=[];
-async function test(name,run){try{await run();results.push({name,status:'PASS'});}catch(error){results.push({name,status:'FAIL',error:error.code||error.name});throw error;}}
+async function test(name,run){try{await run();results.push({name,status:'PASS'});}catch(error){results.push({name,status:'FAIL',error:error.code||error.name,message:error.message});throw error;}}
 async function loadTrialPlugin(){
- const directory=path.join(modules,`.dsha-runtime-trial-test-${randomUUID()}`);
+ const directory=path.join(owned,`.dsha-runtime-trial-test-${randomUUID()}`);
  await fs.mkdir(directory);
+ await fs.symlink(modules,path.join(directory,'node_modules'),process.platform==='win32'?'junction':'dir');
  await Promise.all([
   fs.copyFile(path.join(repository,'app/src/main/assets/runtime-trial-plugin.js'),path.join(directory,'index.mjs')),
   fs.copyFile(path.join(repository,'app/src/main/assets/runtime-trial-page.js'),path.join(directory,'page.js')),
@@ -38,15 +43,38 @@ function trialContext(backend){
  };
 }
 try{
+ await test('private_trial_preload_preserves_real_cli_main_and_other_options',async()=>{
+  // Run the exact production option-consumption prelude with real Node --import
+  // and locked official bin.js. ARM64 native calls remain device-only evidence.
+  const source=await fs.readFile(path.join(repository,'app/src/main/assets/runtime-trial-entry.js'),'utf8');
+  const boundary=source.indexOf('\ntry {');assert.ok(boundary>0);
+  const preload=path.join(owned,'trial-preload.mjs'),other=path.join(owned,'other-preload.mjs');
+  await fs.writeFile(preload,source.slice(0,boundary));
+  await fs.writeFile(other,"process.stderr.write('DSHA_TEST_OTHER_PRELOAD_READY\\n');\n");
+  const rest='--import='+pathToFileURL(other).href+' --conditions=dsha-trial-host-check';
+  const child=spawnSync(process.execPath,[path.join(modules,'@deepseek-ai/dsh/lib/bin.js'),'--version'],{encoding:'utf8',timeout:15000,windowsHide:true,env:{...process.env,NODE_OPTIONS:'--import='+pathToFileURL(preload).href+' '+rest}});
+  assert.equal(child.error,undefined);assert.equal(child.status,0,child.stderr);
+  assert.equal(child.stdout,'0.2.0-rc.2\n');assert.equal(child.stderr,'DSHA_TEST_OTHER_PRELOAD_READY\n');
+ });
+ await test('private_trial_preload_is_not_inherited_by_fresh_storage_child',async()=>{
+  const preload=path.join(owned,'trial-preload.mjs'),other=path.join(owned,'other-preload.mjs'),probe=path.join(owned,'child-probe.mjs');
+  await fs.writeFile(probe,"import {spawnSync} from 'node:child_process';\nif((process.env.NODE_OPTIONS||'')!==process.env.DSHA_TEST_OPTIONS_AFTER)throw Error('OPTIONS_CHANGED');\nconst child=spawnSync(process.execPath,['--eval',\"process.stdout.write('DSHA_TRIAL_FRESH_REOPEN_OK\\\\n')\"],{encoding:'utf8',env:process.env});\nif(child.error||child.status!==0)throw Error('CHILD_FAILED');process.stdout.write(child.stdout);process.stderr.write(child.stderr);\n");
+  for(const rest of ['', '--import='+pathToFileURL(other).href+' --conditions=dsha-trial-host-check']){
+   const child=spawnSync(process.execPath,[probe],{encoding:'utf8',timeout:15000,windowsHide:true,env:{...process.env,NODE_OPTIONS:'--import='+pathToFileURL(preload).href+' '+rest,DSHA_TEST_OPTIONS_AFTER:rest}});
+   assert.equal(child.error,undefined);assert.equal(child.status,0,child.stderr);
+   assert.equal(child.stdout,'DSHA_TRIAL_FRESH_REOPEN_OK\n');
+   assert.equal(child.stderr,rest?'DSHA_TEST_OTHER_PRELOAD_READY\nDSHA_TEST_OTHER_PRELOAD_READY\n':'');
+  }
+ });
  await test('android_health_gate_requires_fresh_process_reopen',async()=>{
   const host=await fs.readFile(path.join(repository,'app/src/main/java/com/deepseekharness/app/runtime/RuntimeTrial.java'),'utf8');
   const bootstrap=await fs.readFile(path.join(repository,'app/src/main/java/com/deepseekharness/app/runtime/ProotBootstrap.java'),'utf8');
   const receipt=await fs.readFile(path.join(repository,'app/src/main/java/com/deepseekharness/app/backup/RuntimeDescriptor.java'),'utf8');
   const plugin=await fs.readFile(path.join(repository,'app/src/main/assets/runtime-trial-plugin.js'),'utf8');
   const builder=await fs.readFile(path.join(repository,'tools/build-dsh-runtime.py'),'utf8');
-  assert.match(host,/List\.of\([^\n]*"storageFreshReopened"[^\n]*\)/);
-  assert.match(host,/proof\.put\("storageFreshReopened",true\)/);
-  assert.match(receipt,/Arrays\.asList\([^\n]*"storageFreshReopened"[^\n]*\)/);
+  assert.match(host,/for\s*\(\s*String\s+check\s*:\s*List\.of\([\s\S]*?"storageFreshReopened"[\s\S]*?\)\s*\)/);
+  assert.match(host,/proof\.put\(\s*"storageFreshReopened"\s*,\s*true\s*\)/);
+  assert.match(receipt,/for\s*\(\s*String\s+check\s*:\s*Arrays\.asList\([\s\S]*?"storageFreshReopened"[\s\S]*?\)\s*\)\s*if\s*\(!Boolean\.TRUE\.equals\(receipt\.get\(check\)\)\)/);
   // process.execPath may be the host-side proroot bridge.  A fresh child must
   // be launched through the guest Node path so it receives the same path
   // translation and can independently read the durable record.
@@ -57,8 +85,11 @@ try{
   assert.match(builder,/SESSION_PERSISTENCE_JSONL_MODULE/);
   assert.match(builder,/DSHA_SESSION_DIRECT_HINTS_V1/);
   assert.match(builder,/resolveHintedGeneration/);
-  assert.match(bootstrap,/DSHA_SESSION_DIRECT_HINTS_V1[\s\S]*publishSessionExclusive as link/);
-  assert.match(bootstrap,/if\s*\(c\.contains\("DSHA_SESSION_DIRECT_HINTS_V1"\)[\s\S]*\) return;/);
+  const runtimeTools=await fs.readFile(path.join(repository,'app/src/main/java/com/deepseekharness/app/runtime/RuntimeTools.java'),'utf8');
+  assert.match(runtimeTools,/runtime-patches\.json/);
+  assert.match(runtimeTools,/ManagedPatchChain\.apply/);
+  const shipped=await fs.readFile(path.join(testRuntime('managed'),'node_modules/@deepseek-ai/dsh-session-persistence-jsonl/lib/index.js'),'utf8');
+  assert.match(shipped,/DSHA_SESSION_DIRECT_HINTS_V1[\s\S]*publishSessionExclusive|publishSessionExclusive[\s\S]*DSHA_SESSION_DIRECT_HINTS_V1/);
 });
  await test('real_locked_json_backend_reopens_isolated_record',async()=>{
   const {JsonStorageBackend}=await import(pathToFileURL(path.join(modules,'@deepseek-ai/dsh-storage-json/lib/index.js')));
